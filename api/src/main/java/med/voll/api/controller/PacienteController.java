@@ -1,17 +1,31 @@
 package med.voll.api.controller;
 
+import jakarta.validation.Valid;
+import med.voll.api.paciente.DatosListadoPaciente;
 import med.voll.api.paciente.DatosRegistroPaciente;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import med.voll.api.paciente.Paciente;
+import med.voll.api.paciente.PacienteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/pacientes")
 public class PacienteController {
 
+    @Autowired
+    private PacienteRepository pacienteRepository;
+
     @PostMapping
-    public void registrar(@RequestBody DatosRegistroPaciente datos){
-        System.out.println("datos recibidos: " + datos);
+    public void registrar(@RequestBody @Valid DatosRegistroPaciente datos){
+        pacienteRepository.save(new Paciente(datos));
+    }
+
+    @GetMapping
+    public Page<DatosListadoPaciente> listadoPacientes(@PageableDefault(page = 0, size = 10, sort = {"nombre"}) Pageable paginacion){
+        return pacienteRepository.findAll(paginacion).map(DatosListadoPaciente::new);
     }
 }
