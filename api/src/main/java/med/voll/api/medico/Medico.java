@@ -16,6 +16,8 @@ public class Medico {
     private String email;
     private String telefono;
     private String documento;
+    @Column(name = "activo")
+    private Boolean activo;
     @Enumerated(EnumType.STRING)
     private Especialidad especialidad;
     @Embedded
@@ -27,6 +29,7 @@ public class Medico {
     public Medico(Long id, String nombre, String email, String telefono, String documento, Especialidad especialidad, Direccion direccion) {
         this.id = id;
         this.nombre = nombre;
+        this.activo = true;
         this.email = email;
         this.telefono = telefono;
         this.documento = documento;
@@ -35,6 +38,7 @@ public class Medico {
     }
 
     public Medico(DatosRegistroMedico datosRegistroMedico) {
+        this.activo = true;
         this.nombre = datosRegistroMedico.nombre();
         this.email = datosRegistroMedico.email();
         this.documento = datosRegistroMedico.documento();
@@ -42,6 +46,10 @@ public class Medico {
         this.especialidad = datosRegistroMedico.especialidad();
         this.direccion = new Direccion(datosRegistroMedico.datosDireccion());
 
+    }
+
+    public Boolean getActivo() {
+        return activo;
     }
 
     public Long getId() {
@@ -97,5 +105,9 @@ public class Medico {
             this.direccion = direccion.actualizarDatos(datosActualizarMedico.direccion());
         }
 
+    }
+
+    public void desactivarMedico() {
+        this.activo = false;
     }
 }

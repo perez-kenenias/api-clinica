@@ -17,6 +17,7 @@ public class Paciente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Boolean activo;
     private String nombre;
     private String email;
     private String documentoIdentidad;
@@ -28,6 +29,7 @@ public class Paciente {
     public Paciente(){ }
 
     public Paciente(Long id, String nombre, String email, String documentoIdentidad, String telefono, Direccion direccion) {
+        this.activo = true;
         this.id = id;
         this.nombre = nombre;
         this.email = email;
@@ -37,11 +39,16 @@ public class Paciente {
     }
 
     public Paciente(DatosRegistroPaciente datos){
+        this.activo = true;
         this.nombre = datos.nombre();
         this.email = datos.email();
         this.telefono = datos.telefono();
         this.documentoIdentidad = datos.documentoIdentidad();
         this.direccion = new Direccion(datos.direccion());
+    }
+
+    public Boolean getActivo() {
+        return activo;
     }
 
     public Long getId() {
@@ -79,5 +86,22 @@ public class Paciente {
     @Override
     public int hashCode() {
         return Objects.hash(id, nombre, email, documentoIdentidad, telefono, direccion);
+    }
+
+    public void actualizarDatos(DatosActualizarPaciente datosActualizarPaciente) {
+        if(datosActualizarPaciente.nombre() != null) {
+            this.nombre = datosActualizarPaciente.nombre();
+        }
+        if(datosActualizarPaciente.documentoIdentidad() != null){
+            this.documentoIdentidad = datosActualizarPaciente.documentoIdentidad();
+        }
+
+        if(datosActualizarPaciente.direccion() != null){
+            this.direccion = direccion.actualizarDatos(datosActualizarPaciente.direccion());
+        }
+    }
+
+    public void desactivarPaciente() {
+        this.activo = false;
     }
 }

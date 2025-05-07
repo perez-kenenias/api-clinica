@@ -9,6 +9,7 @@ import med.voll.api.direccion.DatosDireccion;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record DatosRegistroMedico(
+        Boolean activo,
         @NotBlank
         String nombre,
         @NotBlank

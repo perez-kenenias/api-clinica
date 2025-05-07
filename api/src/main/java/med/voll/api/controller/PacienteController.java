@@ -1,12 +1,9 @@
 package med.voll.api.controller;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import med.voll.api.paciente.DatosListadoPaciente;
-import med.voll.api.paciente.DatosRegistroPaciente;
-import med.voll.api.paciente.Paciente;
-import med.voll.api.paciente.PacienteRepository;
+import med.voll.api.paciente.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -26,6 +23,23 @@ public class PacienteController {
 
     @GetMapping
     public Page<DatosListadoPaciente> listadoPacientes(@PageableDefault(page = 0, size = 10, sort = {"nombre"}) Pageable paginacion){
-        return pacienteRepository.findAll(paginacion).map(DatosListadoPaciente::new);
+//        return pacienteRepository.findAll(paginacion).map(DatosListadoPaciente::new);
+        return pacienteRepository.findByActivoTrue(paginacion).map(DatosListadoPaciente::new);
     }
+
+    @PutMapping
+    @Transactional
+    public void actualizarPaciente(@RequestBody @Valid DatosActualizarPaciente datosActualizarPaciente){
+        Paciente paciente = pacienteRepository.getReferenceById(datosActualizarPaciente.id());
+        paciente.actualizarDatos(datosActualizarPaciente);
+    }
+
+    //    DELETE LOGICO
+    @DeleteMapping("/{id}")
+    @Transactional
+    public void eliminarPaciente(@PathVariable Long id){
+        Paciente paciente = pacienteRepository.getReferenceById(id);
+        paciente.desactivarPaciente();
+    }
+
 }
