@@ -10,19 +10,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record DatosRegistroMedico(
         Boolean activo,
-        @NotBlank
+        @NotBlank(message = "{nombre.obligatorio}")
         String nombre,
-        @NotBlank
-        @Email
+        @NotBlank(message = "{email.obligatorio}")
+        @Email(message = "{email.invalido}")
         String email,
-        @NotBlank
+        @NotBlank(message = "{telefono.obligatorio}")
         String telefono,
-        @NotBlank
-        @Pattern(regexp = "\\d{4,6}")
+        @NotBlank(message = "{crm.obligatorio}")
+        @Pattern(regexp = "\\d{4,6}", message = "{crm.invalido}")
         String documento,
-        @NotNull
+        @NotNull(message = "{especialidad.obligatorio}")
         Especialidad especialidad,
-        @NotNull
+        @NotNull(message = "{direccion.obligatorio}")
         @Valid
         @JsonProperty("direccion")
         DatosDireccion datosDireccion) {
