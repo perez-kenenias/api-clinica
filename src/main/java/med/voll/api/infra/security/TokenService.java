@@ -37,6 +37,11 @@ public class TokenService {
     public String getSubject(String token){
         DecodedJWT verifier = null;
 
+        if(token == null){
+            throw new RuntimeException();
+        }
+
+
         try {
             Algorithm algorithm = Algorithm.HMAC256(apiSecret); // validando la firma del token
             verifier   = JWT.require(algorithm)
