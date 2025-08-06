@@ -40,14 +40,11 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(apiSecret); // validando la firma del token
             verifier   = JWT.require(algorithm)
-                    // specify any specific claim validations
                     .withIssuer("voll med")
-                    // reusable verifier instance
                     .build()
                     .verify(token);
 
         } catch (JWTVerificationException exception){
-            // Invalid signature/claims
             throw new RuntimeException("Token inválido", exception);
         }
 
