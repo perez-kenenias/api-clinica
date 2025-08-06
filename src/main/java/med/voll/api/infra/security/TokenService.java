@@ -3,6 +3,8 @@ package med.voll.api.infra.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import med.voll.api.domain.usuarios.Usuario;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,7 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService {
 
-    @Value("$api.security.secret")
+    @Value("${api.security.secret}")
     private String apiSecret;
 
     public String generarToken(Usuario usuario){
@@ -31,6 +33,31 @@ public class TokenService {
         }
     }
 
+    // valida si el usuario inicio sesion o no
+    public String getSubject(String token){
+        DecodedJWT verifier = null;
+
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(apiSecret); // validando la firma del token
+            verifier   = JWT.require(algorithm)
+                    // specify any specific claim validations
+                    .withIssuer("voll med")
+                    // reusable verifier instance
+                    .build()
+                    .verify(token);
+
+        } catch (JWTVerificationException exception){
+            // Invalid signature/claims
+            throw new RuntimeException("Token inválido", exception);
+        }
+
+        if(verifier.getSubject() == null){
+            throw new RuntimeException("Verifier Invalido");
+        }
+
+        return verifier.getSubject();
+
+    }
 
     private Instant generarFechaExpiracion(){
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-05:00"));
